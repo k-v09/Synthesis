@@ -7,22 +7,6 @@ import (
 	"os"
 )
 
-func CreateFile() {
-	file, err := os.Create("waves/test.txt")
-
-	if err != nil {
-		log.Fatalf("failed creating file: %s", err)
-	}
-	defer file.Close()
-	len, err := file.WriteString("Give it a shot. why not")
-
-	if err != nil {
-		log.Fatalf("failed writing to file: %s", err)
-	}
-	fmt.Printf("\nFile Name: %s", file.Name())
-	fmt.Printf("\nLength: %d bytes", len)
-}
-
 var sr int = 44100.0
 
 type Wave struct {
@@ -46,12 +30,20 @@ func main() {
 	osc1.amplitude = 0.5
 	osc1.angle = 0
 	osc1.offset = (2 * math.Pi * osc1.frequency) / float64(sr)
+	file, err := os.Create("waves/test.txt")
+
+	if err != nil {
+		log.Fatalf("failed creating file: %s", err)
+	}
+	defer file.Close()
+
+	if err != nil {
+		log.Fatalf("failed writing to file: %s", err)
+	}
 
 	for i := 0; i < sr*time; i++ {
 		osc1.angle, qs = sinWave(osc1)
-		qs++ // this line is just a placeholder cause I don't like red lines
+		file.WriteString(fmt.Sprintf("%f", qs) + " ")
+		fmt.Println(osc1.angle)
 	}
-
-	fmt.Println("Hello World!")
-	CreateFile()
 }
