@@ -18,7 +18,7 @@ type Wave struct {
 
 func sinWave(wave Wave) (float64, float64) {
 	sample := wave.amplitude * math.Sin(wave.angle)
-	var nangle float64 = wave.angle + sample
+	var nangle float64 = wave.angle + wave.offset
 	return nangle, sample
 }
 
@@ -43,7 +43,6 @@ func main() {
 
 	for i := 0; i < sr*time; i++ {
 		osc1.angle, qs = sinWave(osc1)
-		file.WriteString(fmt.Sprintf("%f", qs) + " ")
-		fmt.Println(osc1.angle)
+		file.WriteString(fmt.Sprintf("%f", qs) + "\n")
 	}
 }
