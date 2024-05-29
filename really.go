@@ -2,8 +2,26 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math"
+	"os"
 )
+
+func CreateFile() {
+	file, err := os.Create("waves/test.txt")
+
+	if err != nil {
+		log.Fatalf("failed creating file: %s", err)
+	}
+	defer file.Close()
+	len, err := file.WriteString("Give it a shot. why not")
+
+	if err != nil {
+		log.Fatalf("failed writing to file: %s", err)
+	}
+	fmt.Printf("\nFile Name: %s", file.Name())
+	fmt.Printf("\nLength: %d bytes", len)
+}
 
 var sr int = 44100.0
 
@@ -35,4 +53,5 @@ func main() {
 	}
 
 	fmt.Println("Hello World!")
+	CreateFile()
 }
