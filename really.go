@@ -36,7 +36,6 @@ func main() {
 		log.Fatalf("failed creating file: %s", err)
 	}
 	defer file.Close()
-
 	if err != nil {
 		log.Fatalf("failed writing to file: %s", err)
 	}
