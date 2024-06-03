@@ -21,15 +21,21 @@ func sinWave(wave Wave) (float64, float64) {
 	var nangle float64 = wave.angle + wave.offset
 	return nangle, sample
 }
+func sqWave(wave Wave) (float64, float64) {
+	ng, sw := sinWave(wave)
+	sample := wave.amplitude * (sw / math.Abs(sw))
+	return ng, sample
+}
 
 func main() {
-	var qs float64
+	var qs, q2 float64
 	var time int = 2 // where time is the duration of the sample in seconds
-	var osc1 Wave
+	var osc1, osc2 Wave
 	osc1.frequency = 440
 	osc1.amplitude = 0.5
 	osc1.angle = 0
 	osc1.offset = (2 * math.Pi * osc1.frequency) / float64(sr)
+	osc2 = osc1
 	file, err := os.Create("waves/test.txt")
 
 	if err != nil {
@@ -42,6 +48,7 @@ func main() {
 
 	for i := 0; i < sr*time; i++ {
 		osc1.angle, qs = sinWave(osc1)
-		file.WriteString(fmt.Sprintf("%f", qs) + "\n")
+		osc2.angle, q2 = sqWave(osc2)
+		file.WriteString(fmt.Sprintf("%f", qs) + " " + fmt.Sprintf("%f", q2) + "\n")
 	}
 }
