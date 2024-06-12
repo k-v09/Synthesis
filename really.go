@@ -5,6 +5,7 @@ import (
 	"log"
 	"math"
 	"os"
+	"github.com/go-audio/wav"
 )
 
 var sr int = 44100.0
