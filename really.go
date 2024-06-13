@@ -5,6 +5,7 @@ import (
 	"log"
 	"math"
 	"os"
+
 	"github.com/go-audio/wav"
 )
 
@@ -27,14 +28,22 @@ func sqWave(wave Wave) (float64, float64) {
 	sample := wave.amplitude * (sw / math.Abs(sw))
 	return ng, sample
 }
-func tWave(wave Wave) (float64, float64) {
+func tWave(wave Wave, waveFactor float64) (float64, float64) {
 	nn, bw := sinWave(wave)
-	//var waveFactor int = 1
-	sample := wave.amplitude * (2 / math.Pi) * math.Asin(bw)
+	sample := wave.amplitude * (2 / math.Pi) * math.Asin(waveFactor*bw)
 	return nn, sample
 }
 
+func writeWav() {
+	w, err := os.Open("waves/sin.wav")
+	if err != nil {
+		panic(fmt.Sprintf("couldn't open audio file - %v", err))
+	}
+	var enc = wav.NewEncoder(w, sr, 32, 1, 1) //fmt.Printf("%b\n", math.Float64bits(52.0))
+}
+
 func main() {
+
 	var qs, q2, q3 float64
 	var time int = 2 // where time is the duration of the sample in seconds
 	var osc1, osc2, osc3 Wave
@@ -57,7 +66,7 @@ func main() {
 	for i := 0; i < sr*time; i++ {
 		osc1.angle, qs = sinWave(osc1)
 		osc2.angle, q2 = sqWave(osc2)
-		osc3.angle, q3 = tWave(osc3)
+		osc3.angle, q3 = tWave(osc3, 1.0)
 		file.WriteString(fmt.Sprintf("%f", qs) + " " + fmt.Sprintf("%f", q2) + " " + fmt.Sprintf("%f", q3) + "\n")
 	}
 }
