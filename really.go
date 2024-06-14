@@ -37,7 +37,7 @@ func tWave(wave Wave, waveFactor float64) (float64, float64) {
 
 func inclusion() (*wav.Encoder, *os.File, error) {
 	fnr := bufio.NewReader(os.Stdin)
-	fmt.Println("/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/")
+	fmt.Println("---------------------------------------")
 	fmt.Println("Name of the file? (excluding file extension)")
 	fmt.Print("->")
 	unName, _ := fnr.ReadString('\n')
@@ -77,7 +77,7 @@ func Input() int {
 	var tip int
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("Syne Shell")
-	fmt.Println("/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/")
+	fmt.Println("---------------------------------------")
 	findwLoop(reader, tip)
 	return tip
 }
