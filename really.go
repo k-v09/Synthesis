@@ -36,8 +36,12 @@ func tWave(wave Wave, waveFactor float64) (float64, float64) {
 }
 
 func inclusion() (*wav.Encoder, *os.File, error) {
-
-	w, err := os.Create("waves/wave0.wav")
+	fnr := bufio.NewReader(os.Stdin)
+	fmt.Println("/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/")
+	fmt.Println("Name of the file? (excluding file extension)")
+	unName, _ := fnr.ReadString('\n')
+	var name string = "waves/" + unName + ".wav"
+	w, err := os.Create(name)
 	var enc = wav.NewEncoder(w, sr, 32, 1, 1) //fmt.Printf("%b\n", math.Float64bits(52.0))
 	return enc, w, err
 }
