@@ -36,50 +36,86 @@ func tWave(wave Wave, waveFactor float64) (float64, float64) {
 }
 
 func inclusion() (*wav.Encoder, *os.File, error) {
+
 	w, err := os.Create("waves/wave0.wav")
 	var enc = wav.NewEncoder(w, sr, 32, 1, 1) //fmt.Printf("%b\n", math.Float64bits(52.0))
 	return enc, w, err
 }
 
-func Input() {
-
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Println("Simple Shell")
-	fmt.Println("------------------------")
-
+func findwLoop(r *bufio.Reader, waveCase int) int {
 	for {
+		fmt.Println("What type of wave?")
 		fmt.Print("->")
-		text, _ := reader.ReadString('\n')
+		text, _ := r.ReadString('\n')
 		text = strings.Replace(text, "\n", "", -1)
 		if strings.Compare("hi", text) == 0 {
 			fmt.Println("Hiya cutie ;)")
-			break
+			findwLoop(r, waveCase)
+		} else if strings.Compare("sine", text) == 0 || strings.Compare("sin", text) == 0 {
+			waveCase = 0
+			return waveCase
+		} else if strings.Compare("square", text) == 0 || strings.Compare("sq", text) == 0 {
+			waveCase = 1
+			return waveCase
+		} else if strings.Compare("triangle", text) == 0 || strings.Compare("t", text) == 0 {
+			waveCase = 2
+			return waveCase
+		} else {
+			fmt.Println("INVALID WAVE TYPE")
+			fmt.Println("Input should be lowercase")
+			findwLoop(r, waveCase)
 		}
 	}
+}
+
+func Input() int {
+	var tip int
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Println("Syne Shell")
+	fmt.Println("/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/")
+	findwLoop(reader, tip)
+	return tip
 }
 
 func main() {
 	var (
 		qs   float64
 		time int = 2 // where time is the duration of the sample in seconds
-		osc1 Wave
+		osc  Wave
 	)
-	osc1.frequency = 440
-	osc1.amplitude = 0.5
-	osc1.angle = 0
-	osc1.offset = (2 * math.Pi * osc1.frequency) / float64(sr)
-	Input()
+	osc.frequency = 440
+	osc.amplitude = 0.5
+	osc.angle = 0
+	osc.offset = (2 * math.Pi * osc.frequency) / float64(sr)
+	wtype := Input()
 	code, out, err := inclusion()
 	if err != nil {
 		panic(fmt.Sprintf("couldn't open audio file - %v", err))
 	}
-
-	for i := 0; i < sr*time; i++ {
-		osc1.angle, qs = sinWave(osc1)
-		// osc2.angle, q2 = sqWave(osc2)
-		// osc3.angle, q3 = tWave(osc3, 1.0)
-		code.WriteFrame(float32(qs))
+	switch wtype {
+	case 0:
+		{
+			for i := 0; i < sr*time; i++ {
+				osc.angle, qs = sinWave(osc)
+				code.WriteFrame(float32(qs))
+			}
+		}
+	case 1:
+		{
+			for i := 0; i < sr*time; i++ {
+				osc.angle, qs = sqWave(osc)
+				code.WriteFrame(float32(qs))
+			}
+		}
+	case 2:
+		{
+			for i := 0; i < sr*time; i++ {
+				osc.angle, qs = tWave(osc, 1.0)
+				code.WriteFrame(float32(qs))
+			}
+		}
 	}
+
 	code.Close()
 	out.Close()
 	out, err = os.Open("waves/wave0.wav")
