@@ -35,16 +35,17 @@ func tWave(wave Wave, waveFactor float64) (float64, float64) {
 	return nn, sample
 }
 
-func inclusion() (*wav.Encoder, *os.File, error) {
+func inclusion() (*wav.Encoder, *os.File, string, error) {
 	fnr := bufio.NewReader(os.Stdin)
-	fmt.Println("---------------------------------------")
+	fmt.Println("---------------------------------------------------")
 	fmt.Println("Name of the file? (excluding file extension)")
 	fmt.Print("->")
 	unName, _ := fnr.ReadString('\n')
+	unName = unName[:(len(unName) - 1)]
 	var name string = "waves/" + unName + ".wav"
 	w, err := os.Create(name)
 	var enc = wav.NewEncoder(w, sr, 32, 1, 1) //fmt.Printf("%b\n", math.Float64bits(52.0))
-	return enc, w, err
+	return enc, w, name, err
 }
 
 func findwLoop(r *bufio.Reader, waveCase int) int {
@@ -67,7 +68,7 @@ func findwLoop(r *bufio.Reader, waveCase int) int {
 			return waveCase
 		} else {
 			fmt.Println("INVALID WAVE TYPE")
-			fmt.Println("Input should be lowercase")
+			fmt.Println("Input should be lowercase.")
 			findwLoop(r, waveCase)
 		}
 	}
@@ -77,7 +78,7 @@ func Input() int {
 	var tip int
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("Syne Shell")
-	fmt.Println("---------------------------------------")
+	fmt.Println("---------------------------------------------------")
 	findwLoop(reader, tip)
 	return tip
 }
@@ -89,11 +90,11 @@ func main() {
 		osc  Wave
 	)
 	osc.frequency = 440
-	osc.amplitude = 0.5
+	osc.amplitude = 1
 	osc.angle = 0
 	osc.offset = (2 * math.Pi * osc.frequency) / float64(sr)
 	wtype := Input()
-	code, out, err := inclusion()
+	code, out, n, err := inclusion()
 	if err != nil {
 		panic(fmt.Sprintf("couldn't open audio file - %v", err))
 	}
@@ -123,7 +124,7 @@ func main() {
 
 	code.Close()
 	out.Close()
-	out, err = os.Open("waves/wave0.wav")
+	out, err = os.Open(n)
 	if err != nil {
 		panic(err)
 	}
